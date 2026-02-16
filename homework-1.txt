@@ -1,0 +1,163 @@
+EQUIVALENCE PARTITIONING
+
+1. Function that validates credit card numbers.
+   - Valid card numbers: Length between 13 and 16 digits, containing only numeric digits.
+
+    Case | Description                                  | Input                   | Expected Output
+    -----------------------------------------------------------------------------------------------
+      1  | Valid: Length within 13-16, min digits       | 1234567890123           | True
+      2  | Valid: Length within 13-16, max digits       | 1234567890123456        | True
+      3  | Invalid: Too short (Less than 13)            | 123456789012            | False
+      4  | Invalid: Too long (More than 16)             | 12345678901234567       | False
+      5  | Invalid: Contains non-numeric characters     | 1234ABCD90123           | False
+
+2. Function that validates dates.
+   - Valid years: Between 1900 and 2100.
+   - Valid months: Between 1 and 12.
+   - Valid days: Between 1 and 31.
+
+    Case | Description                                 | Input                    | Expected Output
+    -----------------------------------------------------------------------------------------------
+      1  | Valid: all values in range                  | 15, 6, 2000              | True
+      2  | Invalid: Year below range                   | 15, 6, 1899              | False
+      3  | Invalid: Year above range                   | 15, 6, 2101              | False
+      4  | Invalid: Month below range                  | 15, 0, 2000              | False
+      5  | Invalid: Month above range                  | 15, 13, 2000             | False
+      6  | Invalid: Day below range                    | 0, 6, 2000               | False
+      7  | Invalid: Day above range                    | 0, 6, 2000               | False
+
+3. Function that checks the eligibility of a passenger to book a flight.
+   - Eligible ages: Between 18 and 65.
+   - Frequent flyers: True or False.
+
+    Case | Description                                | Input                     | Expected Output
+    ------------------------------------------------------------------------------------------------
+      1  | Valid: Age in range, any FF status         | 30, False                 | True
+      2  | Valid: Age in range, any FF status         | 30, True                  | True
+      3  | Valid: Age below range, but FF = True      | 17, True                  | True
+      4  | Valid: Age above range, but FF = True      | 66, True                  | True
+      5  | Invalid: Age below range and FF = False    | 17, False                 | False
+      6  | Invalid: Age above range and FF = False    | 66, False                 | False
+
+4. Function that validates URLs.
+   - Valid URLs: Length less than or equal to 255, starting with "http://" or "https://".
+
+    Case | Description                                | Input                     | Expected Output
+    -----------------------------------------------------------------------------------------------
+      1  | Valid: Starts with http://, length ok      | http://valid.com          | True
+      2  | Valid: Starts with https://, length ok     | https://valid.com         | True
+      3  | Invalid: Starts with wrong protocol        | ftp://invalid.com         | False
+      4  | Invalid: No protocol	                      | www.invalid.com           | False
+      5  | Invalid: Correct protocol, but too long    | http:// + ("a" * 250)     | False
+      6  | Invalid: Empty String                      | ""                        | False
+
+
+BOUNDARY VALUE ANALYSIS
+
+1. Function that calculates the eligibility of a person for a loan based on their income and credit score.
+   The eligibility rules are as follows:
+   - If the income is less than $30,000, the person is not eligible for a loan.
+   - If the income is between $30,000 and $60,000 (inclusive) and the credit score is above 700, the person is eligible for a standard loan.
+   - If the income is between $30,000 and $60,000 (inclusive) and the credit score is below or equal to 700, the person is eligible for a secured loan.
+   - If the income is greater than $60,000 and the credit score is above 750, the person is eligible for a premium loan.
+   - If the income is greater than $60,000 and the credit score is between 700 and 750 (inclusive), the person is eligible for a standard loan.
+
+    Case | Description (Income, Credit Score)         | (Income - Credit Score)   | Expected Output
+    -----------------------------------------------------------------------------------------------
+      1  | Income just below 30k                      | $29,999 - 750             | Not Eligible
+      2  | Income at lower bound, CS just below 700   | $30,000 - 699             | Secured Loan
+      3  | Income at lower bound, CS at boundary      | $30,000 - 700             | Secured Loan
+      4  | Income at lower bound, CS just above 700	  | $30,000 - 701             |  Standard Loan
+      5  | Income at upper bound, CS just below 700   | $60,000 - 699             | Secured Loan
+      6  | Income at upper bound, CS at boundary      | $60,000 - 700             | Secured Loan
+      7  | Income at upper bound, CS just above 700   | $60,000 - 701             | Standard Loan
+      8  | Income just above 60k, CS just below 750   | $60,001 - 749             | Standard Loan
+      9  | Income just above 60k, CS at boundary      | $60,001 - 750             | Standard Loan
+      10 | Income just above 60k, CS just above 750   | $60,001 - 751             | Premium Loan
+
+2. Function that determines the category of a product in an e-commerce system based on its price.
+   The product categories and pricing rules are as follows:
+   - Category A: Products priced between $10 and $50 (inclusive).
+   - Category B: Products priced between $51 and $100 (inclusive).
+   - Category C: Products priced between $101 and $200 (inclusive).
+   - Category D: Products priced above $200.
+
+    Case | Description                                | Input                     | Expected Output
+    -----------------------------------------------------------------------------------------------
+      1  | Just below Category A min                  | 9.99                      | D
+      2  | At Category A lower bound                  | 10.00                     | A
+      3  | At Category A upper bound                  | 50.00                     | A
+      4  | Just above Category A, into B              | 50.01                     | B
+      5  | At Category B upper bound                  | 100.00                    | B
+      6  | Just above Category B, into C              | 100.01                    | C
+      7  | At Category C upper bound                  | 200.00                    | C
+      8  | Just above Category C, into D              | 200.01                    | D
+
+3. Function that calculates the cost of shipping for packages based on their weight and dimensions.
+   The shipping cost rules are as follows:
+   - If the weight of the package is less than or equal to 1 kg and the dimensions (length, width, and height) are each less than or equal to 10 cm, the cost is $5.
+   - If the weight is between 1 and 5 kg (inclusive) and the dimensions are each between 11 and 30 cm (inclusive), the cost is $10.
+   - If the weight is greater than 5 kg or any of the dimensions is greater than 30 cm, the cost is $20.
+
+    Case | Description                                | Weight - Dimensions (LWH) | Expected Output
+    --------------------------------------------------------------------------------------------
+      1  | All values just below Tier 1               | 0.9 - 9.9, 9.9, 9.9       | $5
+      2  | All values at Tier 1 max                   | 1.0	- 10.0, 10.0, 10.0    | $5
+      3  | Dim above, weight at Tier 1 max -> Tier 2  | 1.0	- 10.0, 10.0, 10.1    | $10
+      4  | Weight just above Tier 1, dims at max      | 1.1	- 10.0, 10.0, 10.0    | $10
+      5  | All values Tier 2 max below category A min | 4.9	- 29.9, 29.9, 29.9    | $10
+      6  | All values at Tier 2 max                   | 5.0 - 30.0, 30.0, 30.0    | $10
+      7  | One dim above, weight at max -> Tier 3     | 5.0 - 30.0, 30.0, 30.1    | $20
+      8  | Weight above Tier 2, dims below max        | 5.1 - 29.9, 29.9, 29.9    | $20
+      9  | All values above Tier 2 max                | 5.1 - 30.1, 30.1, 30.1    | $20
+
+
+DECISION TABLE
+
+1. Create the decision table for a system that provides weather advisories based on temperature and humidity.
+   The rules are:
+   - Weather recommendation "High temperature and humidity. Stay hydrated." for temperature > 30 and humidity > 70.
+   - Weather recommendation "Low temperature. Don't forget your jacket!" for temperature < 0 and any humidity.
+   - No weather recommendation for any other temperature and humidity combination.
+
+    Rule | Temp > 30 | Temp < 0  | Humidity > 70 | High temp | Low temp  | No Recommendation
+    -----------------------------------------------------------------------------------------
+      1  |     T     |     F     |       T       |     X     |           |
+      2  |     T     |     F     |       F       |           |           |         X
+      3  |     F     |     T     |       T       |           |     X     |
+      4  |     F     |     T     |       F       |           |     X     |
+      5  |     F     |     F     |       T       |           |           |         X
+      6  |     F     |     F     |       F       |           |           |         X
+
+    Case | Temperature - Humidity | Expected Output
+    --------------------------------------------------------------------------------------------
+      1  |         35 - 80        | "High temperature and humidity"
+      2  |         35 - 50        | "No Recommendation"
+      3  |         -5 - 80        | "Low temperature"
+      4  |         -5 - 30        | "Low temperature"
+      5  |         20 - 80        | "No Recommendation"
+      6  |         20 - 40        | "No Recommendation"
+
+2. Create the decision table for a system that authenticates users based on their username and password.
+   The rules are:
+   - Returns "Admin" for username "admin" and password "admin123".
+   - Returns "User" for any other username with at least 5 characters and password with at least 8 characters.
+   - Returns "Invalid" if the username or password lenghts are not met.
+
+    Rule |  "admin"  | "admin123"| Length >= 5 | Length >= 8 | "Admin" | "User"  | "Invalid"
+    ----------------------------------------------------------------------------------------
+      1  |     T     |     T     |      -      |       -     |    X    |         |
+      2  |     T     |     F     |      -      |       -     |         |         |     X
+      3  |     F     |     -     |      T      |       T     |         |    X    |
+      4  |     F     |     -     |      T      |       F     |         |         |     X
+      5  |     F     |     -     |      F      |       T     |         |         |     X
+      6  |     F     |     -     |      F      |       F     |         |         |     X
+
+    Case | Username |  Password   | Expected Output
+    --------------------------------------------------------------------------------------------
+      1  |  admin   |   admin123  | "Admin"
+      2  |  admin   |  wrongpass  | "Invalid"
+      3  | user_len |   pass1234  | "User"
+      4  | user_len |    short    | "Invalid"
+      5  |   len    |validPassword| "Invalid"
+      6  |   us     |    short    | "Invalid"
