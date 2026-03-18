@@ -43,6 +43,8 @@ repos:
     rev: v3.0.3
     hooks:
       - id: pylint
+        args: [--disable=import-error]
+        additional_dependencies: ["requests"]
 
   - repo: https://github.com/sirosen/check-jsonschema
     rev: 0.28.0
